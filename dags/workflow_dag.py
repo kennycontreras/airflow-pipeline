@@ -38,7 +38,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
         IGNOREHEADER 1
-        DELIMITER ','
+        CSV;
     """,
     provide_context=True,
 )
