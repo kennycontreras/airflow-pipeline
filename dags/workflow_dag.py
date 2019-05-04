@@ -14,8 +14,10 @@ default_args = {
     'start_date': datetime(2018, 11, 1),
     'end_date:': datetime(2018, 11, 30),
     'email_on_retry': False,
+    'email_on_failure': False,
     'retries': 3,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(minutes=5),
+    'depends_on_past': False
 }
 
 
@@ -34,7 +36,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
     dag=dag,
     aws_credentials_id='aws_credentials',
     redshift_conn_id='redshift',
-    s3_key='log_data/{{ ds }}-event.csv',
+    s3_key='log_data/{{ ds }}-events.csv',
     s3_bucket='dend',
     table='staging_events'
 )
@@ -81,7 +83,8 @@ load_artist_dimension_table = LoadDimensionOperator(
     dag=dag,
     postgres_conn_id='redshift',
     table='artists',
-    sql_query=SqlQueries.artist_table_insert
+    sql_query=SqlQueries.artist_table_insert,
+    load_mode='truncate'
 )
 
 load_time_dimension_table = LoadDimensionOperator(
@@ -95,13 +98,16 @@ load_time_dimension_table = LoadDimensionOperator(
 
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
-    dag=dag
+    dag=dag,
+    postgres_conn_id='redshift',
+    sql_queries=['select count(1) from public."artists" where artistid is null ',
+                 'select count(1) from public."songplays" where userid is null'],
+    expected_result=[0, 0]
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 
-# Graph View
 start_operator >> [stage_events_to_redshift, stage_songs_to_redshift] >> load_songplays_table
 load_songplays_table >> [load_user_dimension_table, load_song_dimension_table,
                          load_artist_dimension_table, load_time_dimension_table] >> run_quality_checks
