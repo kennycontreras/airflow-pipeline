@@ -38,11 +38,11 @@ class LoadDimensionOperator(BaseOperator):
         # Dimension tables allow truncate mode.
         if self.load_mode == 'truncate':
 
-            self.log.info('Truncating and loading dimesion table')
+            self.log.info('Truncating and loading dimension table')
             # Run truncate first and then insert statement
             redshift.run(truncate_sql + '\n' + insert_sql)
 
         else:
-            self.log.info('Loading dimesion table')
+            self.log.info('Loading dimension table')
             # Run insert statement
             redshift.run(insert_sql)
