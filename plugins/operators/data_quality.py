@@ -22,9 +22,12 @@ class DataQualityOperator(BaseOperator):
     def execute(self, context):
         redshift = PostgresHook(self.postgres_conn_id)
 
+        # For statement to iterate over queries and conditions
         for query, condition in zip(self.sql_queries, self.expected_result):
+            # Execute query and save result
             count = redshift.get_records(query)
 
+            # Validate results
             if count[0][0] > condition:
                 raise ValueError("Data Quality check failed. Expected condition: (), Result on table was: {}".format(
                     condition, count[0][0]))

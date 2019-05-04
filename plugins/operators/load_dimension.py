@@ -35,6 +35,7 @@ class LoadDimensionOperator(BaseOperator):
                     {};
                 """.format(self.table, self.sql_query)
 
+        # Dimension tables allow truncate mode.
         if self.load_mode == 'truncate':
 
             self.log.info('Truncating and loading dimesion table')

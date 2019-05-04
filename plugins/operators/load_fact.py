@@ -23,6 +23,7 @@ class LoadFactOperator(BaseOperator):
         redshift = PostgresHook(self.postgres_conn_id)
         self.log.info('Loading fact table')
 
+        # Insert statement. Fact table will allow insert mode and not truncate-insert or delete-insert
         insert_sql = """
                 INSERT INTO {}
                 {}
