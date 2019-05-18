@@ -2,7 +2,7 @@
 
 ETL created using Airflow. This project load data from S3 buckets and write the data into staging, fact and dimension tables. Using PostgresOperator and PythonOperator we are able to create Fact and Dimension tables for a star-schema.
 
-This project runs data quality check into dimension and fact tables checking  null values and empty tables.
+This project runs data quality check into dimension and fact tables checking null values and empty tables.
 
 ## Graph View 
 
@@ -25,9 +25,9 @@ default_args = {
 }
 ```
 
-Beside default parameters above, this DAG runs hourly with max 1 active run at the same time.
+Beside default parameters above, this DAG runs hourly with a max 1 active run at the same time.
 
-`start_date` context is used to load data from S3 (CSV files). All hooks are created with the finality being flexibles. This means that you can define is you want to delete or just append the data into dimension and fact tables. You can use different connections id too. Just make sure that the Hook fit your purpouse
+`start_date` context is used to load data from S3 (CSV files). All hooks are created with the goal of being flexible. This means that you can define is you want to delete or just append the data into dimension and fact tables. You can use different connection id too. Just make sure that the Hook fit your purpose
 
 #### Subdag
 
